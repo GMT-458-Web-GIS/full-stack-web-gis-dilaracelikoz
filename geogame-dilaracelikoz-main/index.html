@@ -15,7 +15,7 @@
         <div id="mouse-coords">Lat: 0.0000, Lng: 0.0000</div>
     </div>
     
-    <div id="side-panel">
+    <div id="side-panel"> 
         
         <div id="splash-screen">
             <h2>HERITAGE HUNT</h2>
@@ -33,6 +33,7 @@
             <div id="city-buttons" style="margin-top: 25px; display: flex; justify-content: space-around;">
                 <button class="city-select-button" onclick="selectCity('ankara')">ANKARA<br><span style="font-size:0.8em">(Easy - 105s)</span></button>
                 <button class="city-select-button" onclick="selectCity('istanbul')">ISTANBUL<br><span style="font-size:0.8em">(Hard - 85s)</span></button>
+                
             </div>
         </div>
         
@@ -76,5 +77,65 @@
     <script src="script.js"></script>
 </body>
 </html>
+
+<div id="auth-modal" class="modal">
+        <div class="modal-content auth-content">
+            <span class="close-btn" onclick="toggleAuthModal()">×</span>
+            
+            <h2 id="auth-title">HUNTER LOGIN</h2>
+            <p id="auth-subtitle">Enter your credentials to save your legacy!</p>
+
+            <form id="auth-form" onsubmit="return false;">
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="user-email" placeholder="hunter@heritage.com" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="user-password" placeholder="******" required>
+                </div>
+
+<div class="input-group" id="role-group" style="display: none;">
+    <label>Choose Your Path</label>
+    
+    <div class="role-options-container">
+        <div class="role-card active" id="btn-hunter" onclick="selectRole('hunter')">
+            <span class="role-icon">🏹</span>
+            <span class="role-name">Hunter</span>
+        </div>
+
+        <div class="role-card" id="btn-admin" onclick="selectRole('admin')">
+            <span class="role-icon">💎</span>
+            <span class="role-name">Master</span>
+        </div>
+    </div>
+
+    <input type="hidden" id="selected-role-value" value="hunter">
+</div>
+
+                <button type="submit" id="submit-auth-btn">LOGIN</button>
+            </form>
+
+            <p class="switch-text">
+                <p class="guest-link" onclick="playAsGuest()">Skip & Play as Guest (Wanderer Mode)</p>
+                <span id="auth-question">Don't have an ID?</span>
+                <span onclick="switchAuthMode()" id="switch-btn">Create New Account</span>
+                
+            </p>
+        </div>
+    </div>
+
 <script type="module" src="firebase-config.js"></script>
     <script type="module" src="auth.js"></script>
+
+<div id="wanderer-info-panel">
+    <h3>🎒 Wanderer Mode</h3>
+    <p>Welcome, Traveler!</p>
+    <ul class="wanderer-rules">
+        <li>🗺️ <strong>Explore:</strong> Roam the map freely.</li>
+        <li>🔍 <strong>Discover:</strong> Zoom in to see hidden details.</li>
+        <li>😌 <strong>Relax:</strong> No timer, no score, no pressure.</li>
+    </ul>
+    <button onclick="location.reload()" class="exit-btn">Exit to Login</button>
+</div>
