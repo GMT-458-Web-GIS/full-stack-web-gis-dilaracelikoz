@@ -81,25 +81,41 @@ window.toggleAuthModal = function() {
 }
 
 let isLoginMode = true;
+// auth.js içindeki switchAuthMode fonksiyonunu sil, BUNU YAPIŞTIR:
+
 window.switchAuthMode = function() {
     isLoginMode = !isLoginMode;
+    
     const title = document.getElementById('auth-title');
     const subtitle = document.getElementById('auth-subtitle');
     const btn = document.getElementById('submit-auth-btn');
     const switchBtn = document.getElementById('switch-btn');
     const questionText = document.getElementById('auth-question');
-    const roleGroup = document.getElementById('role-group'); // Artık gizli ama kodda kalsın
+    
+    // ✨ YENİ: Sekmeleri (Tabs) buluyoruz
+    const tabs = document.getElementById('login-tabs');
     
     if (isLoginMode) {
+        // --- GİRİŞ MODU (LOGIN) ---
+        // Sekmeleri Göster (Çünkü Master buradan giriş yapacak)
+        if(tabs) tabs.style.display = 'flex'; 
+
         title.textContent = "HUNTER LOGIN";
         if(subtitle) subtitle.textContent = "Enter your credentials to save your legacy!";
         btn.textContent = "LOGIN";
+        
         questionText.textContent = "Don't have an ID? "; 
         switchBtn.textContent = "Create New Account";
+        
     } else {
+        // --- KAYIT MODU (REGISTER) ---
+        // 👻 Sekmeleri GİZLE (Kayıt olurken rol seçimi yok!)
+        if(tabs) tabs.style.display = 'none'; 
+
         title.textContent = "JOIN THE HUNT";
         if(subtitle) subtitle.textContent = "Create an account to become a Legend!";
         btn.textContent = "REGISTER";
+        
         questionText.textContent = "Already have an account? ";
         switchBtn.textContent = "Login Here";
     }
@@ -165,30 +181,45 @@ async function loginUser(email, password) {
     }
 }
 
-// --- ROL KONTROLÜ & MASTER TESPİTİ ---
+// auth.js içindeki checkUserRole fonksiyonunu SİL ve BUNU YAPIŞTIR:
+
 async function checkUserRole(uid) {
+    // 1. Önce veritabanına bakmadan direkt mail kontrolü yapalım (En Hızlı Yöntem)
+    const currentUser = auth.currentUser;
+    const MASTER_EMAIL = "dilaracelikoz@icloud.com"; 
+
+    console.log("🔍 Rol Kontrolü Yapılıyor...");
+
+    if (currentUser && currentUser.email.toLowerCase() === MASTER_EMAIL.toLowerCase()) {
+        console.log("👑 KRALİÇE TESPİT EDİLDİ (Direkt Erişim)");
+        
+        // Admin modunu aç
+        document.body.classList.add('admin-mode');
+        
+        // Butonu bul ve göster
+        const masterBtn = document.getElementById('master-add-btn');
+        if (masterBtn) {
+            masterBtn.style.display = 'block'; // GİZLENME, ORTAYA ÇIK!
+            console.log("✅ Buton görünür yapıldı.");
+        } else {
+            console.error("❌ HATA: 'master-add-btn' ID'li buton HTML'de bulunamadı!");
+        }
+
+        showCustomAlert("👑 KRALİÇE GİRİŞİ", "Hoş geldin Diloş! Editör modu aktif.");
+        return; // İşlem tamam, veritabanına sormaya gerek bile yok
+    }
+
+    // Eğer mail tutmazsa veritabanına bak (Diğer adminler için)
     const userDoc = await getDoc(doc(db, "users", uid));
     if (userDoc.exists()) {
         const userData = userDoc.data();
-        let userRole = userData.role;
-        const currentEmail = userData.email;
-
-        // Master kontrolü
-        if (currentEmail.toLowerCase() === MASTER_EMAIL.toLowerCase()) {
-            userRole = 'admin'; 
-            showCustomAlert("👑 KRALİÇE GİRİŞİ", "Sistem seni tanıdı Diloş! Editör modu açılıyor.");
-        }
-
-        if (userRole === 'admin') {
+        if (userData.role === 'admin') {
             document.body.classList.add('admin-mode');
             const masterBtn = document.getElementById('master-add-btn');
             if (masterBtn) masterBtn.style.display = 'block';
-        } else {
-            document.body.classList.remove('admin-mode');
         }
     }
 }
-
 // --- 💎 YENİ EKLENEN KISIM: MASTER FONKSİYONLARI 💎 ---
 
 // 1. "SORU EKLE" Butonuna Basınca
@@ -284,3 +315,4 @@ window.switchLoginTab = function(type) {
         if(subtitle) subtitle.innerText = "Welcome back, Creator. The map awaits.";
     }
 }
+
