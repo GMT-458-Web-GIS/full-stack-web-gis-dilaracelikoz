@@ -1,4 +1,4 @@
-
+// --- LEAFLET IKON TANIMLAMALARI ---
 const pinkIcon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -8,8 +8,7 @@ const pinkIcon = L.icon({
     className: 'huechange' 
 });
 
-
-
+// --- YÖN HESAPLAMA ---
 function getDirectionText(userLat, userLng, targetLat, targetLng, distance) {
     let direction = "";
     if (targetLng > userLng) direction += "East"; else direction += "West";
@@ -18,6 +17,7 @@ function getDirectionText(userLat, userLng, targetLat, targetLng, distance) {
     return `Go ${direction}, approx. ${distance}m 🧭`;
 }
 
+// --- DEĞİŞKENLER ---
 let score = 0;
 let maxPossibleScore = 0;
 let time = 105;
@@ -30,6 +30,7 @@ let myChart = null;
 let responseTimes = []; 
 let lastTimeRemaining = 105; 
 
+// --- DOM ELEMENTLERİ ---
 const scoreDisplay = document.getElementById('score');
 const timerDisplay = document.getElementById('timer');
 const clueText = document.getElementById('clue-text');
@@ -42,6 +43,7 @@ const homeButton = document.getElementById('home-button');
 const resultModal = document.getElementById('result-modal'); 
 const mouseCoords = document.getElementById('mouse-coords');
 
+// --- ŞEHİR VERİLERİ ---
 const cityData = {
     ankara: {
         center: [39.9334, 32.8597],
@@ -73,6 +75,7 @@ const cityData = {
 
 const map = L.map('map-area'); 
 
+// --- HARİTA BAŞLATMA ---
 function initializeMap() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -88,6 +91,7 @@ function initializeMap() {
     map.setView([39.0, 35.0], 6);
 }
 
+// --- OYUN FONKSİYONLARI ---
 function restartGame() {
     resetGame();
     startGame();
@@ -119,13 +123,9 @@ function resetGame() {
     clueText.innerHTML = `
         Ready to explore ${currentCity.toUpperCase()}? Press START.
         <div style="font-size: 0.85em; color: #FF90BB; font-weight: bold; margin-top: 15px; line-height: 1.5; border-top: 2px dashed #FF90BB; padding-top: 10px;">
-
             📍 GAMEPLAY RULES:<br>
-            
             <span style="color: #A53860; font-weight: 450;"> Wrong clicks reduce time!</span><br>
-            
             <span style="color: #A53860; font-weight: 450;"> Use bottom-left coords for distance.</span><br>
-            
             <span style="color: #A53860; font-weight: 450;"> Zoom in for better accuracy!</span>
         </div>
     `;
@@ -288,7 +288,11 @@ function showResultModal() {
     });
 }
 
+// --- HARİTA TIKLAMA MANTIĞI (OYUN İÇİN) ---
 function handleMapClick(e) {
+    // 🛡️ ÖNEMLİ KORUMA: Eğer Master Modu açıksa, oyun tıklaması sayma!
+    if (window.isMasterAddingMode === true) return;
+
     if (!gameActive) return;
 
     const userLat = e.latlng.lat;
@@ -339,6 +343,7 @@ function handleMapClick(e) {
     }
 }
 
+// --- KONFETİ EFEKTİ ---
 function triggerConfetti() {
     var duration = 3 * 1000; 
     var animationEnd = Date.now() + duration;
@@ -350,11 +355,7 @@ function triggerConfetti() {
 
     var interval = setInterval(function() {
         var timeLeft = animationEnd - Date.now();
-
-        if (timeLeft <= 0) {
-            return clearInterval(interval);
-        }
-
+        if (timeLeft <= 0) return clearInterval(interval);
         var particleCount = 50 * (timeLeft / duration);
         var colors = ['#FF90BB', '#EC7FA9', '#FFEDFA', '#FFEDFA'];
 
@@ -372,3 +373,84 @@ function triggerConfetti() {
 }
 
 initializeMap();
+
+// --- 📏 MİSAFİR MODU: MESAFE ÖLÇER ---
+let rulerPoints = []; 
+let rulerLine = null; 
+let rulerMarkers = []; 
+
+function enableRulerMode() {
+    const pinkIcon = new L.Icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png', 
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+        className: 'pink-magic-icon' 
+    });
+
+    map.on('click', function(e) {
+        // Eğer Master Modu açıksa, cetvel çalışmasın
+        if (window.isMasterAddingMode === true) return;
+        
+        if (!document.body.classList.contains('guest-mode')) return;
+
+        rulerPoints.push(e.latlng);
+        const marker = L.marker(e.latlng, { icon: pinkIcon }).addTo(map);
+        rulerMarkers.push(marker);
+
+        if (rulerPoints.length === 2) {
+            const distance = map.distance(rulerPoints[0], rulerPoints[1]);
+            let distanceText = "";
+            if (distance > 1000) distanceText = (distance / 1000).toFixed(2) + " km";
+            else distanceText = Math.round(distance) + " m";
+
+            rulerLine = L.polyline(rulerPoints, {
+                color: '#eb2f96', 
+                weight: 4,
+                dashArray: '10, 10',
+                opacity: 0.8
+            }).addTo(map);
+
+            marker.bindPopup(`📏 Mesafe: <strong>${distanceText}</strong>`).openPopup();
+        } 
+        else if (rulerPoints.length > 2) {
+            clearRuler();
+            rulerPoints.push(e.latlng);
+            const newMarker = L.marker(e.latlng, { icon: pinkIcon }).addTo(map);
+            rulerMarkers.push(newMarker);
+        }
+    });
+}
+
+function clearRuler() {
+    if (rulerLine) map.removeLayer(rulerLine);
+    rulerMarkers.forEach(m => map.removeLayer(m));
+    rulerPoints = [];
+    rulerMarkers = [];
+    rulerLine = null;
+}
+
+// --- 💎 MASTER MODU TIKLAMASI (EN ALTTA) 💎 ---
+map.on('click', function(e) {
+    // Sadece Master Ekleme Modu açıksa çalışır (auth.js kontrol eder)
+    if (window.isMasterAddingMode === true) {
+        console.log("💎 Master tıklaması algılandı!", e.latlng);
+
+        const lat = e.latlng.lat.toFixed(6);
+        const lng = e.latlng.lng.toFixed(6);
+        
+        const adminPanel = document.getElementById('admin-panel');
+        if (adminPanel) {
+            adminPanel.style.display = 'flex'; 
+            const coordBox = document.getElementById('admin-coords');
+            if (coordBox) coordBox.value = `Lat: ${lat}, Lng: ${lng}`;
+        }
+
+        L.popup()
+            .setLatLng(e.latlng)
+            .setContent("💎 Buraya soru mu ekleyeceğiz?")
+            .openOn(map);
+    }
+});

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heritage Hunt</title> <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <title>Heritage Hunt</title> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
@@ -16,7 +17,6 @@
     </div>
     
     <div id="side-panel"> 
-        
         <div id="splash-screen">
             <h2>HERITAGE HUNT</h2>
             <div id="splash-info">
@@ -33,7 +33,6 @@
             <div id="city-buttons" style="margin-top: 25px; display: flex; justify-content: space-around;">
                 <button class="city-select-button" onclick="selectCity('ankara')">ANKARA<br><span style="font-size:0.8em">(Easy - 105s)</span></button>
                 <button class="city-select-button" onclick="selectCity('istanbul')">ISTANBUL<br><span style="font-size:0.8em">(Hard - 85s)</span></button>
-                
             </div>
         </div>
         
@@ -70,17 +69,14 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-    <script src="script.js"></script>
-</body>
-</html>
-
 <div id="auth-modal" class="modal">
         <div class="modal-content auth-content">
             <span class="close-btn" onclick="toggleAuthModal()">×</span>
+            
+            <div id="login-tabs" class="login-tabs">
+                <button class="tab-btn active" onclick="switchLoginTab('hunter')">🏹 HUNTER</button>
+                <button class="tab-btn" onclick="switchLoginTab('master')">💎 MASTER</button>
+            </div>
             
             <h2 id="auth-title">HUNTER LOGIN</h2>
             <p id="auth-subtitle">Enter your credentials to save your legacy!</p>
@@ -96,46 +92,78 @@
                     <input type="password" id="user-password" placeholder="******" required>
                 </div>
 
-<div class="input-group" id="role-group" style="display: none;">
-    <label>Choose Your Path</label>
-    
-    <div class="role-options-container">
-        <div class="role-card active" id="btn-hunter" onclick="selectRole('hunter')">
-            <span class="role-icon">🏹</span>
-            <span class="role-name">Hunter</span>
-        </div>
-
-        <div class="role-card" id="btn-admin" onclick="selectRole('admin')">
-            <span class="role-icon">💎</span>
-            <span class="role-name">Master</span>
-        </div>
-    </div>
-
-    <input type="hidden" id="selected-role-value" value="hunter">
-</div>
-
                 <button type="submit" id="submit-auth-btn">LOGIN</button>
             </form>
 
-            <p class="switch-text">
+            <div class="switch-text">
                 <p class="guest-link" onclick="playAsGuest()">Skip & Play as Guest (Wanderer Mode)</p>
                 <span id="auth-question">Don't have an ID?</span>
                 <span onclick="switchAuthMode()" id="switch-btn">Create New Account</span>
-                
-            </p>
+            </div>
         </div>
     </div>
 
-<script type="module" src="firebase-config.js"></script>
+<button id="guest-exit-btn" onclick="location.reload()">← ÇIKIŞ YAP (LOGIN)</button>
+
+<div id="custom-alert-modal" class="modal" style="display: none;">
+    <div class="modal-content aesthetic-alert">
+        <h3 id="alert-title">✨ Bildirim ✨</h3>
+        <p id="alert-message">Mesajınız buraya gelecek...</p>
+        
+        <button onclick="document.getElementById('custom-alert-modal').style.display='none'" class="modal-close-btn">TAMAM</button>
+        
+    </div>
+</div>
+
+<div id="admin-panel" class="modal" style="display: none;">
+    <div class="modal-content admin-box">
+        <span class="close-btn" onclick="toggleAdminPanel()">×</span>
+        
+        <h2 style="color: #722ed1;">💎 MASTER CONTROLS</h2>
+        <p>Haritada seçilen noktaya soru ekle.</p>
+        
+        <form id="admin-form" onsubmit="return false;">
+            <div class="input-group">
+                <label>📍 Koordinatlar</label>
+                <input type="text" id="admin-coords" readonly style="background: #f3f0ff; color: #555;">
+            </div>
+
+            <div class="input-group">
+                <label>🏙️ Hangi Şehir?</label>
+                <select id="admin-city">
+                    <option value="ankara">Ankara</option>
+                    <option value="istanbul">Istanbul</option>
+                    <option value="izmir">İzmir</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>🧩 İpucu (Soru)</label>
+                <textarea id="admin-clue" rows="3" placeholder="Örn: Ulu Önder'in ebedi istirahatgahı..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>🎯 Kabul Edilen Mesafe (Metre)</label>
+                <input type="number" id="admin-radius" value="500">
+            </div>
+
+            <button onclick="saveLocationToDB()" class="glow-btn" style="background: linear-gradient(45deg, #b37feb, #722ed1);">VERİTABANINA KAYDET</button>
+        </form>
+    </div>
+</div>
+
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script src="script.js"></script>
+    <script type="module" src="firebase-config.js"></script>
     <script type="module" src="auth.js"></script>
 
-<div id="wanderer-info-panel">
-    <h3>🎒 Wanderer Mode</h3>
-    <p>Welcome, Traveler!</p>
-    <ul class="wanderer-rules">
-        <li>🗺️ <strong>Explore:</strong> Roam the map freely.</li>
-        <li>🔍 <strong>Discover:</strong> Zoom in to see hidden details.</li>
-        <li>😌 <strong>Relax:</strong> No timer, no score, no pressure.</li>
-    </ul>
-    <button onclick="location.reload()" class="exit-btn">Exit to Login</button>
-</div>
+<button id="master-add-btn" onclick="activateMasterMode()" style="display: none;">
+    💎 SORU EKLE
+</button>
+
+</body> </html>

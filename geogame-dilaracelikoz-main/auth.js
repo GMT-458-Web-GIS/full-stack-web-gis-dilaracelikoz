@@ -1,94 +1,286 @@
-// --- 🔐 UI KONTROL FONKSİYONLARI ---
+// auth.js dosyasının EN ÜSTÜ (Eskileri sil, bunu yapıştır)
 
-// 1. Modalı Açıp Kapatma (TAMİR EDİLDİ: Flex Uyumlu)
-window.toggleAuthModal = function() {
-    const modal = document.getElementById('auth-modal');
+// 1. Config dosyasından auth ve db'yi al
+import { auth, db } from './firebase-config.js';
+
+// 2. Auth ve Firestore fonksiyonlarını çek
+import { 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword,
+    signOut, 
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+// ✨ BURASI GÜNCELLENDİ: Soru eklemek için 'collection' ve 'addDoc' ekledik
+import { 
+    doc, 
+    setDoc, 
+    getDoc,
+    collection,
+    addDoc 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+console.log("🔥 Auth ve Master Modülü Yüklendi!");
+
+// --- 🌸 SÜSLÜ UYARI FONKSİYONLARI 🌸 ---
+window.showCustomAlert = function(title, message) {
+    const modal = document.getElementById('custom-alert-modal');
+    const titleEl = document.getElementById('alert-title');
+    const msgEl = document.getElementById('alert-message');
     
-    // HATA BURADAYDI: Artık 'block' değil 'flex' kontrolü yapıyoruz
-    if (modal.style.display === 'flex') {
-        modal.style.display = 'none'; // Gizle (Oyun Başlasın!)
+    if (modal && titleEl && msgEl) {
+        titleEl.innerText = title;
+        msgEl.innerHTML = message.replace(/\n/g, "<br>");
+        modal.style.display = 'flex';
     } else {
-        modal.style.display = 'flex'; // Göster
+        alert(message);
     }
 }
 
-// Giriş Yap / Kayıt Ol Geçişi (GÜNCELLENMİŞ)
-let isLoginMode = true;
+window.closeCustomAlert = function() {
+    const modal = document.getElementById('custom-alert-modal');
+    if (modal) modal.style.display = 'none';
+}
 
+// --- FORM GÖNDERME İŞLEMİ (GİRİŞ veya KAYIT) ---
+const authForm = document.getElementById('auth-form');
+const MASTER_EMAIL = "dilaracelikoz@icloud.com"; // 👑 Kraliçe Maili
+
+if (authForm) {
+    authForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); 
+        const email = document.getElementById('user-email').value.trim();
+        const password = document.getElementById('user-password').value;
+        const btnText = document.getElementById('submit-auth-btn').textContent;
+
+        if (btnText === "REGISTER") {
+            await registerUser(email, password);
+        } else {
+            // Master/Hunter sekme kontrolü
+            const isMasterTab = document.querySelector('.tab-btn.master-active');
+            if (isMasterTab) {
+                if (email.toLowerCase() !== MASTER_EMAIL.toLowerCase()) {
+                    showCustomAlert("⛔ YETKİSİZ GİRİŞ", "Bu kapı sadece <strong>Game Master</strong> içindir!<br>Lütfen 'Hunter' sekmesinden giriş yapın.");
+                    return;
+                }
+            } else {
+                if (email.toLowerCase() === MASTER_EMAIL.toLowerCase()) {
+                    showCustomAlert("👑 MASTER, BURASI DEĞİL!", "Siz bir Avcı değilsiniz!<br>Lütfen <strong>MASTER</strong> sekmesine tıklayarak giriş yapın.");
+                    return;
+                }
+            }
+            await loginUser(email, password);
+        }
+    });
+}
+
+// --- 🔐 UI KONTROL FONKSİYONLARI ---
+window.toggleAuthModal = function() {
+    const modal = document.getElementById('auth-modal');
+    modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+}
+
+let isLoginMode = true;
 window.switchAuthMode = function() {
     isLoginMode = !isLoginMode;
-    
     const title = document.getElementById('auth-title');
     const subtitle = document.getElementById('auth-subtitle');
     const btn = document.getElementById('submit-auth-btn');
     const switchBtn = document.getElementById('switch-btn');
-    
-    // YENİ: Soru metnini yakalıyoruz
     const questionText = document.getElementById('auth-question');
-    const roleGroup = document.getElementById('role-group');
+    const roleGroup = document.getElementById('role-group'); // Artık gizli ama kodda kalsın
     
     if (isLoginMode) {
-        // --- GİRİŞ MODU ---
         title.textContent = "HUNTER LOGIN";
         if(subtitle) subtitle.textContent = "Enter your credentials to save your legacy!";
         btn.textContent = "LOGIN";
-        roleGroup.style.display = 'none'; 
-        
-        // Yazıları Eski Haline Getir
         questionText.textContent = "Don't have an ID? "; 
         switchBtn.textContent = "Create New Account";
-        
     } else {
-        // --- KAYIT MODU ---
         title.textContent = "JOIN THE HUNT";
         if(subtitle) subtitle.textContent = "Create an account to become a Legend!";
         btn.textContent = "REGISTER";
-        roleGroup.style.display = 'block';
-        
-        // Yazıları Değiştir: "Zaten hesabın var mı?"
         questionText.textContent = "Already have an account? ";
         switchBtn.textContent = "Login Here";
     }
 }
 
-// 3. Sayfa Yüklenince Kutu Otomatik Açılsın
+// Sayfa Yüklenince
 window.onload = function() {
     const modal = document.getElementById('auth-modal');
-    if(modal) {
-        modal.style.display = 'flex'; // Başlangıçta 'flex' olarak aç
-    }
+    if(modal) modal.style.display = 'flex';
 };
-// --- ROL SEÇİM FONKSİYONU ---
-window.selectRole = function(role) {
-    // 1. Gizli kutuya değeri yaz
-    document.getElementById('selected-role-value').value = role;
 
-    // 2. Görsel değişimi (Hangisi aktif?)
-    const btnHunter = document.getElementById('btn-hunter');
-    const btnAdmin = document.getElementById('btn-admin');
+window.playAsGuest = function() {
+    toggleAuthModal();
+    document.body.classList.add('guest-mode');
+    setTimeout(() => { 
+        window.dispatchEvent(new Event('resize'));
+        if (typeof enableRulerMode === "function") {
+            enableRulerMode();
+            showCustomAlert(
+                "🎒 WANDERER MODU", 
+                "Hoş geldin Gezgin!<br><br>Burada zaman veya puan baskısı yok. Haritayı özgürce keşfet.<br><br>" +
+                "<span style='color: #eb2f96; font-size: 1.3em;'>📏</span> <strong>MÜHENDİS ÖZELLİĞİ:</strong><br>" +
+                "İki noktaya tıklayarak mesafe ölçebilirsin."
+            );
+        }
+    }, 300);
+}
 
-    if (role === 'hunter') {
-        btnHunter.classList.add('active'); // Hunter parlasın
-        btnAdmin.classList.remove('active'); // Admin sönsün
-    } else {
-        btnAdmin.classList.add('active'); // Admin parlasın
-        btnHunter.classList.remove('active'); // Hunter sönsün
+// --- 🌟 KAYIT & GİRİŞ İŞLEMLERİ ---
+async function registerUser(email, password) {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await setDoc(doc(db, "users", user.uid), {
+            email: email,
+            role: 'hunter',
+            createdAt: new Date(),
+            bestScore: 0
+        });
+        await signOut(auth);
+        showCustomAlert("🎉 KAYIT BAŞARILI!", "Hesabın oluşturuldu. Şimdi giriş yapabilirsin.");
+        switchAuthMode();
+        document.getElementById('user-email').value = email;
+        document.getElementById('user-password').value = '';
+    } catch (error) {
+        console.error("Kayıt Hatası:", error);
+        let errorMsg = error.message;
+        if(errorMsg.includes("email-already-in-use")) errorMsg = "Bu e-posta zaten kullanımda!";
+        else if(errorMsg.includes("weak-password")) errorMsg = "Şifre en az 6 karakter olmalı.";
+        showCustomAlert("⚠️ Kayıt Başarısız", errorMsg);
     }
 }
 
+async function loginUser(email, password) {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await checkUserRole(user.uid);
+        toggleAuthModal(); // Başarılıysa kapat
+    } catch (error) {
+        console.error("Giriş Hatası:", error);
+        showCustomAlert("⚠️ Giriş Başarısız", "E-posta veya şifre yanlış.");
+    }
+}
 
-// --- 🎒 MİSAFİR MODU (DÜRTME EKLENTİLİ) ---
-window.playAsGuest = function() {
-    // 1. Giriş Kutusunu Kapat
-    toggleAuthModal();
+// --- ROL KONTROLÜ & MASTER TESPİTİ ---
+async function checkUserRole(uid) {
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if (userDoc.exists()) {
+        const userData = userDoc.data();
+        let userRole = userData.role;
+        const currentEmail = userData.email;
+
+        // Master kontrolü
+        if (currentEmail.toLowerCase() === MASTER_EMAIL.toLowerCase()) {
+            userRole = 'admin'; 
+            showCustomAlert("👑 KRALİÇE GİRİŞİ", "Sistem seni tanıdı Diloş! Editör modu açılıyor.");
+        }
+
+        if (userRole === 'admin') {
+            document.body.classList.add('admin-mode');
+            const masterBtn = document.getElementById('master-add-btn');
+            if (masterBtn) masterBtn.style.display = 'block';
+        } else {
+            document.body.classList.remove('admin-mode');
+        }
+    }
+}
+
+// --- 💎 YENİ EKLENEN KISIM: MASTER FONKSİYONLARI 💎 ---
+
+// 1. "SORU EKLE" Butonuna Basınca
+window.activateMasterMode = function() {
+    // Global bir değişken tanımlayıp haritaya tıklayınca bu modu kontrol edeceğiz
+    window.isMasterAddingMode = true; 
+    document.body.classList.add('master-cursor'); // İmleci değiştir
     
-    // 2. CSS Sınıfını Ekle (Görünümü değiştir)
-    document.body.classList.add('guest-mode');
+    showCustomAlert(
+        "💎 EDİTÖR MODU AKTİF", 
+        "Şimdi haritada bir noktaya tıkla.<br>Tıkladığın yerde soru ekleme paneli açılacak!"
+    );
+}
+
+// 2. Admin Panelini Aç/Kapa
+window.toggleAdminPanel = function() {
+    const panel = document.getElementById('admin-panel');
+    if (panel.style.display === 'flex') {
+        panel.style.display = 'none';
+        window.isMasterAddingMode = false; // İptal edince modu kapat
+        document.body.classList.remove('master-cursor');
+    } else {
+        panel.style.display = 'flex';
+    }
+}
+
+// 3. Veritabanına Soruyu Kaydet
+window.saveLocationToDB = async function() {
+    const coordsText = document.getElementById('admin-coords').value;
+    const city = document.getElementById('admin-city').value;
+    const clue = document.getElementById('admin-clue').value;
+    const radius = document.getElementById('admin-radius').value;
+
+    if (!coordsText || !clue) {
+        alert("Lütfen bir yer seçin ve ipucu yazın!");
+        return;
+    }
+
+    // Koordinatları parçala "Lat: xx, Lng: yy" -> [xx, yy]
+    const parts = coordsText.split(',');
+    const lat = parseFloat(parts[0].split(':')[1]);
+    const lng = parseFloat(parts[1].split(':')[1]);
+
+    try {
+        // Firestore 'locations' koleksiyonuna ekle
+        await addDoc(collection(db, "locations"), {
+            name: clue.substring(0, 15) + "...", // İpucunun başı isim olsun
+            clue: clue,
+            lat: lat,
+            lng: lng,
+            city: city,
+            radius: parseInt(radius)
+        });
+
+        showCustomAlert("✅ BAŞARILI", "Yeni soru haritaya eklendi!");
+        toggleAdminPanel(); // Paneli kapat
+        
+        // Formu temizle
+        document.getElementById('admin-clue').value = '';
+        
+    } catch (error) {
+        console.error("Hata:", error);
+        alert("Kaydederken hata oluştu: " + error.message);
+    }
+}
+
+// --- SİSTEM DİNLEME ---
+onAuthStateChanged(auth, async (user) => {
+    if (user) console.log("User logged in:", user.email);
+});
+
+// --- LOGIN TAB DEĞİŞİMİ ---
+window.switchLoginTab = function(type) {
+    const title = document.getElementById('auth-title');
+    const subtitle = document.getElementById('auth-subtitle');
+    const btns = document.querySelectorAll('.tab-btn');
     
-    // 3. ✨ SİHİRLİ DOKUNUŞ: Haritayı Dürt! ✨
-    // 300 milisaniye bekleyip (kutu kapanana kadar) tarayıcıya "Ekran Boyutu Değişti!" yalanını söylüyoruz.
-    // Böylece harita panikle uyanıp tüm boşluğu dolduruyor.
-    setTimeout(() => {
-        window.dispatchEvent(new Event('resize'));
-    }, 0.01);
+    btns.forEach(b => {
+        b.classList.remove('active');
+        b.classList.remove('master-active');
+    });
+
+    if (type === 'hunter') {
+        btns[0].classList.add('active');
+        title.innerText = "HUNTER LOGIN";
+        title.style.color = "#a61e4d";
+        if(subtitle) subtitle.innerText = "Enter your credentials to save your legacy!";
+    } else {
+        btns[1].classList.add('active');
+        btns[1].classList.add('master-active');
+        title.innerText = "💎 MASTER LOGIN";
+        title.style.color = "#722ed1";
+        if(subtitle) subtitle.innerText = "Welcome back, Creator. The map awaits.";
+    }
 }
