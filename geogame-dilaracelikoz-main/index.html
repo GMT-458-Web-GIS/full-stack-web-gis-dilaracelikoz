@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <button id="home-button" onclick="goHome()">MAIN MENU</button>
+        <button id="home-button" onclick="goHome()">GO HOME</button>
     </div>
 
     <div id="result-modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(255, 136, 170, 0.3);">
@@ -74,8 +74,8 @@
             <span class="close-btn" onclick="toggleAuthModal()">×</span>
             
             <div id="login-tabs" class="login-tabs">
-                <button class="tab-btn active" onclick="switchLoginTab('hunter')">🏹 HUNTER</button>
-                <button class="tab-btn" onclick="switchLoginTab('master')">💎 MASTER</button>
+                <button class="tab-btn active" onclick="switchLoginTab('hunter')">HUNTER</button>
+                <button class="tab-btn" onclick="switchLoginTab('master')">ADMIN</button>
             </div>
             
             <h2 id="auth-title">HUNTER LOGIN</h2>
@@ -89,7 +89,7 @@
                 
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="user-password" placeholder="******" required>
+                    <input type="password" id="user-password" placeholder="at least 6 characters" required>
                 </div>
 
                 <button type="submit" id="submit-auth-btn">LOGIN</button>
@@ -103,14 +103,14 @@
         </div>
     </div>
 
-<button id="guest-exit-btn" onclick="location.reload()">← ÇIKIŞ YAP (LOGIN)</button>
+
 
 <div id="custom-alert-modal" class="modal" style="display: none;">
     <div class="modal-content aesthetic-alert">
-        <h3 id="alert-title">✨ Bildirim ✨</h3>
-        <p id="alert-message">Mesajınız buraya gelecek...</p>
+        <h3 id="alert-title">✨ Alert ✨</h3>
+        <p id="alert-message">Message here...</p>
         
-        <button onclick="document.getElementById('custom-alert-modal').style.display='none'" class="modal-close-btn">TAMAM</button>
+        <button onclick="document.getElementById('custom-alert-modal').style.display='none'" class="modal-close-btn" style="background-color: #FFEDFA; color: #FF90BB; border: 2px solid #FF90BB; border-radius: 10px; font-weight: bold; padding: 5px 15px; cursor: pointer;">OK</button>
         
     </div>
 </div>
@@ -119,24 +119,24 @@
     <div class="modal-content admin-box">
         <span class="close-btn" onclick="toggleAdminPanel()">×</span>
         
-        <h2 style="color: #722ed1;">💎 MASTER CONTROLS</h2>
+        <h2 style="color: #EC7FA9 ;">ADMIN CONTROLS</h2>
         
         <div id="master-management-list" style="margin-top: 15px; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
-            <h3 style="color: #722ed1; font-size: 1.1em;">🔍 Mevcut Soruları Yönet</h3>
+            <h3 style="color: #EC7FA9; font-size: 1.1em;">Manage Existing Questions</h3>
             <div id="location-items-container" style="max-height: 60px; overflow-y: auto; border: 1px solid #ffadd2; padding: 10px; border-radius: 10px; background: #fff5f8;">
                 </div>
         </div>
 
-        <p>Haritada seçilen noktaya yeni soru ekle:</p>
+        <p>Add a new question:</p>
         
         <form id="admin-form" onsubmit="return false;">
             <div class="input-group">
-                <label>📍 Koordinatlar</label>
-                <input type="text" id="admin-coords" readonly style="background: #f3f0ff; color: #555;">
+                <label>Coordinates</label>
+                <input type="text" id="admin-coords" readonly style="background: #f3f0ff; color: #EC7FA9 ;">
             </div>
 
             <div class="input-group">
-                <label>🏙️ Hangi Şehir?</label>
+                <label>City Section</Section></label>
                 <select id="admin-city">
                     <option value="ankara">Ankara</option>
                     <option value="istanbul">Istanbul</option>
@@ -144,16 +144,16 @@
             </div>
 
             <div class="input-group">
-                <label>🧩 İpucu (Soru)</label>
-                <textarea id="admin-clue" rows="3" placeholder="Örn: Ulu Önder'in ebedi istirahatgahı..."></textarea>
+                <label>Add Clue</label>
+                <textarea id="admin-clue" rows="3" placeholder="Ex: Homeland..."></textarea>
             </div>
 
             <div class="input-group"> 
-                <label>🎯 Kabul Edilen Mesafe (Metre)</label>
+                <label>Accepted Distance (Meters)</label>
                 <input type="number" id="admin-radius" value="500" style="max-height: 60px; overflow-y: auto;">
             </div>
 
-            <button onclick="saveLocationToDB()" class="glow-btn" style="background: linear-gradient(45deg, #b37feb, #722ed1); width: 100%;">VERİTABANINA KAYDET</button>
+            <button onclick="saveLocationToDB()" class="glow-btn" style="background: #FFEDFA; color: #EC7FA9; border: 3px solid #EC7FA9; width: 100%;">Save Into Database</button>
         </form>
     </div>
 </div>
@@ -169,7 +169,11 @@
     <script type="module" src="auth.js"></script>
 
 <button id="master-add-btn" onclick="activateMasterMode()" style="display: none;">
-    💎 SORU EKLE
+    ADD / MANAGE QUESTIONS
+</button>
+
+<button id="exit-to-login-btn" onclick="exitToLogin()" style="position: fixed; bottom: 70px; left: 10px; z-index: 10002; padding: 10px 15px; border-radius: 20px; background: #ffadd2; color: white; border: 2px solid white; font-weight: bold; cursor: pointer; font-size: 0.8em; opacity: 0.8;">
+    Logout / Main Menu 
 </button>
 
 </body> </html>

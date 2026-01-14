@@ -1,4 +1,4 @@
-// --- LEAFLET IKON TANIMLAMALARI ---
+
 const pinkIcon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -8,7 +8,7 @@ const pinkIcon = L.icon({
     className: 'huechange' 
 });
 
-// --- YÖN HESAPLAMA ---
+
 function getDirectionText(userLat, userLng, targetLat, targetLng, distance) {
     let direction = "";
     if (targetLng > userLng) direction += "East"; else direction += "West";
@@ -17,7 +17,7 @@ function getDirectionText(userLat, userLng, targetLat, targetLng, distance) {
     return `Go ${direction}, approx. ${distance}m 🧭`;
 }
 
-// --- DEĞİŞKENLER ---
+
 let score = 0;
 let maxPossibleScore = 0;
 let time = 105;
@@ -30,7 +30,7 @@ let myChart = null;
 let responseTimes = []; 
 let lastTimeRemaining = 105; 
 
-// --- DOM ELEMENTLERİ ---
+
 const scoreDisplay = document.getElementById('score');
 const timerDisplay = document.getElementById('timer');
 const clueText = document.getElementById('clue-text');
@@ -43,7 +43,7 @@ const homeButton = document.getElementById('home-button');
 const resultModal = document.getElementById('result-modal'); 
 const mouseCoords = document.getElementById('mouse-coords');
 
-// --- ŞEHİR VERİLERİ ---
+
 const cityData = {
     ankara: {
         center: [39.9334, 32.8597],
@@ -75,7 +75,7 @@ const cityData = {
 
 const map = L.map('map-area'); 
 
-// --- HARİTA BAŞLATMA ---
+
 function initializeMap() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -91,7 +91,7 @@ function initializeMap() {
     map.setView([39.0, 35.0], 6);
 }
 
-// --- OYUN FONKSİYONLARI ---
+
 function restartGame() {
     resetGame();
     startGame();
@@ -101,7 +101,7 @@ function resetGame() {
     currentCity = citySelect.value;
     const cityDataRef = cityData[currentCity];
 
-    currentArtifacts = cityDataRef.artifacts;
+    currentArtifacts = [...cityDataRef.artifacts].sort(() => Math.random() - 0.5);
 
     maxPossibleScore = 0;
     currentArtifacts.forEach(art => {
@@ -288,9 +288,9 @@ function showResultModal() {
     });
 }
 
-// --- HARİTA TIKLAMA MANTIĞI (OYUN İÇİN) ---
+
 function handleMapClick(e) {
-    // 🛡️ ÖNEMLİ KORUMA: Eğer Master Modu açıksa, oyun tıklaması sayma!
+
     if (window.isMasterAddingMode === true) return;
 
     if (!gameActive) return;
@@ -343,7 +343,7 @@ function handleMapClick(e) {
     }
 }
 
-// --- KONFETİ EFEKTİ ---
+
 function triggerConfetti() {
     var duration = 3 * 1000; 
     var animationEnd = Date.now() + duration;
@@ -374,7 +374,7 @@ function triggerConfetti() {
 
 initializeMap();
 
-// --- 📏 MİSAFİR MODU: MESAFE ÖLÇER ---
+
 let rulerPoints = []; 
 let rulerLine = null; 
 let rulerMarkers = []; 
@@ -391,7 +391,7 @@ function enableRulerMode() {
     });
 
     map.on('click', function(e) {
-        // Eğer Master Modu açıksa, cetvel çalışmasın
+
         if (window.isMasterAddingMode === true) return;
         
         if (!document.body.classList.contains('guest-mode')) return;
@@ -413,7 +413,7 @@ function enableRulerMode() {
                 opacity: 0.8
             }).addTo(map);
 
-            marker.bindPopup(`📏 Mesafe: <strong>${distanceText}</strong>`).openPopup();
+            marker.bindPopup(`📏 Distance: <strong>${distanceText}</strong>`).openPopup();
         } 
         else if (rulerPoints.length > 2) {
             clearRuler();
@@ -432,9 +432,9 @@ function clearRuler() {
     rulerLine = null;
 }
 
-// --- 💎 MASTER MODU TIKLAMASI (EN ALTTA) 💎 ---
+
 map.on('click', function(e) {
-    // Sadece Master Ekleme Modu açıksa çalışır (auth.js kontrol eder)
+    
     if (window.isMasterAddingMode === true) {
         console.log("💎 Master tıklaması algılandı!", e.latlng);
 
@@ -450,7 +450,7 @@ map.on('click', function(e) {
 
         L.popup()
             .setLatLng(e.latlng)
-            .setContent("💎 Buraya soru mu ekleyeceğiz?")
+            .setContent("Add question here?")
             .openOn(map);
     }
 });

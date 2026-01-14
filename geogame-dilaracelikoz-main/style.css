@@ -234,13 +234,13 @@ h4 {
 
 
 .auth-content {
-    background: rgba(255, 255, 255, 0.9); 
+    background: #FFEDFA(255, 136, 170, 0.3); 
     border: 3px solid #eb2f96;
     border-radius: 25px;
     width: 100%;
     max-width: 420px; 
     padding: 40px;
-    box-shadow: 0 20px 60px rgba(235, 47, 150, 0.4); 
+    box-shadow: 0 20px 60px rgba(255, 136, 170, 0.3); 
     text-align: center;
     position: relative;
     animation: fadeInDown 0.8s ease; 
@@ -290,7 +290,7 @@ h4 {
 
 .input-group input:focus {
     border-color: #eb2f96;
-    box-shadow: 0 0 15px rgba(235, 47, 150, 0.2);
+    box-shadow: 0 0 15px rgba(255, 136, 170, 0.3);
 }
 
 
@@ -305,7 +305,7 @@ h4 {
     font-size: 1.1em;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(235, 47, 150, 0.4);
+    box-shadow: 0 5px 15px rgba(255, 136, 170, 0.3);
     transition: transform 0.2s;
 }
 
@@ -317,12 +317,12 @@ h4 {
 .guest-link {
     display: block;
     margin-top: 20px;
-    color: #999;
+    color: #eb2f96 ;
     font-size: 0.9em;
     text-decoration: underline;
     cursor: pointer;
 }
-.guest-link:hover { color: #eb2f96; }
+.guest-link:hover { color: #c41d7f; }
 
 
 #switch-btn {
@@ -339,17 +339,17 @@ h4 {
     font-size: 1.1em; 
 }
 
-/* --- YENİ ROL SEÇİM KARTLARI --- */
+
 
 .role-options-container {
-    display: flex; /* Yan yana dizilsinler */
-    gap: 15px; /* Aralarında boşluk olsun */
+    display: flex; 
+    gap: 15px; 
     margin-top: 5px;
 }
 
 .role-card {
-    flex: 1; /* Eşit genişlikte olsunlar */
-    background-color: white;
+    flex: 1; 
+    background-color: #FFEDFA;
     border: 3px solid #ffadd2;
     border-radius: 20px;
     padding: 15px 10px;
@@ -362,19 +362,17 @@ h4 {
     justify-content: center;
 }
 
-/* Seçili Olmayanların Hali (Soluk) */
 .role-card {
     opacity: 0.6;
     transform: scale(0.95);
 }
 
-/* Seçili Olanın Hali (Parlak ve Canlı) ✨ */
 .role-card.active {
-    border-color: #eb2f96; /* Koyu pembe kenar */
-    background-color: #fff0f6; /* Açık pembe iç */
+    border-color: #eb2f96; 
+    background-color: #FFEDFA; 
     opacity: 1;
-    transform: scale(1.05); /* Biraz büyüsün */
-    box-shadow: 0 5px 15px rgba(235, 47, 150, 0.3);
+    transform: scale(1.05); 
+    box-shadow: 0 5px 15px rgba(255, 136, 170, 0.3);
 }
 
 .role-icon {
@@ -389,40 +387,34 @@ h4 {
     font-size: 0.9em;
 }
 
-/* Üzerine gelince hafif hareketlensin */
+
 .role-card:hover {
     border-color: #eb2f96;
 }
 
-/* --- ROL SEÇİMİ İNCE AYARLAR (Ortalama & Boşluk) --- */
 
-/* 1. Başlığı Ortala ve Büyüt */
+
+
 #role-group label {
-    text-align: center !important; /* Yazıyı ortala */
+    text-align: center !important; 
     width: 100%;
-    font-size: 1.1em; /* Biraz daha belirgin olsun */
-    margin-bottom: 15px; /* Butonlarla yazı arası açılsın */
+    font-size: 1.1em; 
+    margin-bottom: 15px; 
 }
 
-/* 2. Şifre Kutusuyla Arasına Mesafe Koy */
+
 #role-group {
-    margin-top: 30px !important; /* Üstten ekstra boşluk bırak */
+    margin-top: 30px !important; 
     padding-top: 10px;
-    border-top: 1px dashed #ffadd2; /* İstersen araya şirin bir çizgi (Opsiyonel) */
+    border-top: 1px dashed #ffadd2; 
 }
 
-/* --- 🎒 MİSAFİR MODU (SADE, ORTALI VE OYNAK VERSİYON) --- */
 
-/* --- 🎒 MİSAFİR MODU (SENİN HTML'İNE %100 UYUMLU) --- */
-
-/* 1. SAĞDAKİ MENÜYÜ GİZLE (İşte suçlu buradaydı!) */
-/* HTML'de id="side-panel" olduğu için # işareti kullanıyoruz */
 body.guest-mode #side-panel {
     display: none !important; 
 }
 
-/* 2. HARİTA ALANINI TAM EKRAN YAP */
-/* HTML'de harita id="map-area" içindeyse: */
+
 body.guest-mode #map-area {
     width: 100vw !important;
     height: 100vh !important;
@@ -430,48 +422,37 @@ body.guest-mode #map-area {
 }
 
 
-
-
-
-
-
-/* --- 🌸 SÜSLÜ KUTU İÇİN "EN ÜSTTE DUR" EMRİ 🌸 --- */
-
-/* 1. Kutunun Dış Çerçevesi (Ekranı Kaplayan Siyahlık) */
-/* --- 🌸 KRAL KUTU (MESAJ KUTUSU) 🌸 --- */
-/* --- 🌸 USLU KUTU (DÜZELTİLMİŞ) 🌸 --- */
 #custom-alert-modal {
-    display: none; /* Başlangıçta KESİNLİKLE gizli */
-    position: fixed; /* Ekrana sabit */
-    z-index: 999999; /* En üstte */
+    display: none; 
+    position: fixed; 
+    z-index: 999999; 
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Arkası karanlık */
+    background-color: rgba(255, 136, 170, 0.3); 
     
-    /* İçindekileri ortalamak için Flex özellikleri */
+   
     justify-content: center;
     align-items: center;
 }
 
-/* Kutunun Tasarımı */
+
 .aesthetic-alert {
-    background: white;
+    background: #FFEDFA;
     border: 4px solid #eb2f96;
     border-radius: 25px;
     padding: 30px;
     width: 90%;
     max-width: 400px;
     text-align: center;
-    box-shadow: 0 0 50px rgba(235, 47, 150, 0.8);
+    box-shadow: 0 0 50px rgba(255, 136, 170, 0.3);
     position: relative;
-    animation: popIn 0.3s ease-out; /* Zıplayarak açılma */
+    animation: popIn 0.3s ease-out; 
 }
 
-/* Kutu açıldığında JavaScript bunu 'display: flex' yapacak ve ortalanacak */
 
-/* --- LOGIN SEKMELERİ (TABS) --- */
+
 .login-tabs {
     display: flex;
     justify-content: center;
@@ -480,9 +461,9 @@ body.guest-mode #map-area {
 }
 
 .tab-btn {
-    background: transparent;
+    background: #FFEDFA;
     border: 2px solid #ffadd2;
-    color: #ffadd2;
+    color: #ea3084;
     padding: 8px 15px;
     border-radius: 20px;
     cursor: pointer;
@@ -492,219 +473,204 @@ body.guest-mode #map-area {
 }
 
 .tab-btn.active {
-    background: #ffadd2;
-    color: white;
+    background: #eb2f96;
+    color: #FFEDFA;
     opacity: 1;
     transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(255, 173, 210, 0.4);
 }
 
-/* Master seçilince buton mor olsun */
+
 .tab-btn.master-active {
-    border-color: #b37feb;
-    background: #b37feb;
+    border-color: #EC7FA9 ;
+    background: #eb2f96;
     color: white;
-    box-shadow: 0 4px 15px rgba(179, 127, 235, 0.5);
+    box-shadow: 0 4px 15px rgba(255, 136, 170, 0.3);
 }
 
-/* --- 🎒 YENİ MİSAFİR MODU BUTONU --- */
-#guest-exit-btn {
-    display: none; /* Normalde gizli */
-    position: absolute; /* Haritanın üzerine yerleş */
-    top: 20px;
-    right: 20px;
-    z-index: 1000; /* Haritanın üstünde dur */
-    
-    background: linear-gradient(45deg, #ffadd2, #eb2f96); /* Pembe geçiş */
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 30px;
-    font-weight: bold;
-    font-family: 'Poppins', sans-serif;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(235, 47, 150, 0.4);
-    transition: all 0.3s ease;
-}
 
-#guest-exit-btn:hover {
-    transform: scale(1.05) translateX(-5px); /* Üstüne gelince hafif oyna */
-    box-shadow: 0 8px 20px rgba(235, 47, 150, 0.6);
-}
-
-/* SADECE Misafir Modundayken bu butonu göster */
-body.guest-mode #guest-exit-btn {
-    display: block;
-}
-
-/* Misafir modunda yan paneldeki diğer şeyleri garanti gizle */
 body.guest-mode #side-panel {
     display: none !important; 
 }
 
-/* --- 🪄 SİHİRLİ PEMBE RAPTİYE FİLTRESİ --- */
 .pink-magic-icon {
-    /* Mavi rengi (Hue: 200) alıp 130 derece çevirince (Hue: 330) PEMBE olur! */
+
     filter: hue-rotate(130deg) saturate(1.5) brightness(0.95);
 }
 
-/* --- ✨ MODAL İÇİ "TAMAM" BUTONU (NÖTR STİL) ✨ --- */
+
 .modal-close-btn {
-    background-color: #f8f9fa; /* Çok açık gri/beyaz arka plan */
-    color: #495057; /* Koyu gri yazı rengi (Siyah değil, daha yumuşak) */
-    border: 2px solid #dee2e6; /* İnce, açık gri bir çerçeve */
-    
-    /* Diğer butonlara benzeyen özellikler: */
-    padding: 10px 35px; /* Genişlik ve yükseklik */
-    border-radius: 30px; /* Tam yuvarlak köşeler */
-    font-family: 'Poppins', sans-serif; /* Sitenin yazı tipi */
-    font-weight: bold; /* Kalın yazı */
+    background-color: #FFEDFA; 
+    color: #FF90BB; 
+    border: 2px solid #dee2e6; 
+  
+    padding: 10px 35px; 
+    border-radius: 30px; 
+    font-family: 'Poppins', sans-serif; 
+    font-weight: bold; 
     font-size: 1em;
-    cursor: pointer; /* Üstüne gelince el işareti */
-    transition: all 0.3s ease; /* Yumuşak geçiş efekti */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Çok hafif gölge */
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 6px rgba(255, 136, 170, 0.3); 
 }
 
-/* Üstüne gelince ne olsun? */
+
 .modal-close-btn:hover {
-    background-color: #e9ecef; /* Biraz koyulaşsın */
-    border-color: #ced4da; /* Çerçeve belirginleşsin */
-    transform: translateY(-2px); /* Hafifçe yukarı zıplasın */
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1); /* Gölge artsın */
+    background-color: #e9ecef; 
+    border-color: #EC7FA9 ; 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 12px rgba(255, 136, 170, 0.3); 
 }
 
-/* --- 👑 MASTER PANEL TASARIMI --- */
+
 .admin-box {
     background: #fff;
-    border: 4px solid #722ed1; /* Mor Çerçeve */
+    border: 4px solid #EC7FA9; 
     border-radius: 20px;
     padding: 25px;
     width: 90%;
     max-width: 450px;
-    box-shadow: 0 0 40px rgba(114, 46, 209, 0.4);
-    text-align: left; /* Form düzgün dursun */
+    box-shadow: 0 0 40px rgba(255, 136, 170, 0.3);
+    text-align: left; 
 }
 
-/* Haritadaki "Soru Ekle" Butonu */
-/* --- 👑 MASTER BUTONU (GARANTİ GÖRÜNÜM) --- */
+
 #master-add-btn {
-    display: none; /* JS açana kadar gizli */
-    position: fixed !important; /* Ekrana yapışık! */
-    bottom: 30px !important;    /* Aşağıdan 30px yukarıda */
-    left: 20% !important;       /* Ortada */
-    transform: translateX(-50%) !important; /* Tam ortalamak için */
-    z-index: 999999 !important; /* Her şeyin üstünde (Map'in bile) */
-    
-    background: linear-gradient(45deg, #722ed1, #eb2f96);
-    color: white;
-    border: 3px solid white; /* Beyaz çerçeve ekledim ki belli olsun */
+    display: none; 
+    position: fixed !important; 
+    bottom: 30px !important;    
+    left: 40% !important;       
+    transform: translateX(-50%) !important; 
+    z-index: 999999 !important; 
+
+    background: #FFEDFA;
+    color: #FF90BB;
+    border: 3px solid #EC7FA9 ; 
     padding: 15px 40px;
     font-size: 1.2em;
     font-weight: bold;
     border-radius: 50px;
     cursor: pointer;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 5px 20px rgba(255, 136, 170, 0.3);
     transition: all 0.3s;
 }
 
 #master-add-btn:hover {
     transform: translateX(-50%) scale(1.1) !important;
 }
-/* Master Modunda İmleç Değişsin */
+
 body.master-cursor #map-area {
-    cursor: crosshair; /* Nişangah işareti */
+    cursor: crosshair; 
 }
 
-/* 💎 MASTER PANEL SIKIŞTIRMA VE SIĞDIRMA */
 
-/* 1. Ana Paneli (Admin Box) Boyutlandır */
+
 .admin-box {
-    max-height: 95vh !important; /* Panel ekranın %85'inden fazla uzamasın */
-    width: 380px !important;    /* Paneli biraz daraltalım */
-    overflow-y: auto !important; /* İçerik taşarsa panel kendi içinde kaysın */
+    max-height: 95vh !important; 
+    width: 380px !important;    
+    overflow-y: auto !important; 
     padding: 15px !important;
     display: flex;
     flex-direction: column;
 }
 
-/* 2. Soru Listesini (CRUD) Daha İnce Yap */
+
 #location-items-container {
-    max-height: 100px !important; /* Liste alanını küçültelim */
+    max-height: 100px !important; 
     overflow-y: auto !important;
     margin-bottom: 10px !important;
     padding: 5px !important;
 }
 
-/* 3. Başlıkları ve Form Elemanlarını Küçült */
+
 .admin-box h2 { font-size: 2em !important; margin: 5px 0 !important; }
 .admin-box h3 { font-size: 1.5em !important; margin: 5px 0 !important; }
 .admin-box p { font-size: 1.5em !important; margin: 3px 0 !important; }
 
-/* 4. Form Kutularını (Input/Textarea) "Diyete" Sok */
+
 .input-group label { font-size: 0.8em !important; margin-bottom: 2px !important; }
 
 .admin-box input, 
 .admin-box select, 
 .admin-box textarea {
-    padding: 6px 12px !important; /* İç boşluğu azalttık */
-    font-size: 1em !important;  /* Yazıları küçülttük */
+    padding: 6px 12px !important; 
+    font-size: 1em !important;  
     margin-bottom: 5px !important;
 }
 
-/* 5. "Veritabanına Kaydet" Butonunu Kibarlaştır */
+
 .glow-btn {
     padding: 10px !important;
     font-size: 0.9em !important;
     margin-top: 10px !important;
 }
 
-/* --- 🎀 DİLOŞ'UN MOBİL MAKYAJI 🎀 --- */
-
 @media (max-width: 768px) {
-    /* 1. Sayfa düzenini yan yana olmaktan çıkar, alt alta diz */
+
     body {
         flex-direction: column !important;
-        overflow-y: auto !important; /* Telefon ekranında aşağı kaydırabilmek için */
+        overflow-y: auto !important;
     }
 
-    /* 2. Harita ekranın üst yarısını kaplasın */
+
     #map-area {
         width: 100% !important;
-        height: 50vh !important; /* Ekran yüksekliğinin yarısı */
+        height: 45vh !important; 
     }
 
-    /* 3. Yan panel (skor, ipucu, butonlar) haritanın altına gelsin */
     #side-panel {
         width: 100% !important;
         height: auto !important;
-        border-left: none !important;
-        border-top: 5px solid #EC7FA9 !important; /* Pembe çizgiyi üste alalım */
-        padding: 15px !important;
+        padding: 10px !important;
+        margin-bottom: 120px !important; 
     }
 
-    /* 4. Şehir seçme butonlarını tam genişlik yapalım ki parmakla basması kolay olsun */
+    #mouse-coords {
+        bottom: 5px !important;
+        left: 5px !important;
+        font-size: 10px !important;
+        padding: 2px 5px !important;
+        z-index: 10005 !important;
+    }
+
+    #main-menu-btn {
+        position: fixed !important;
+        bottom: 35px !important; 
+        left: 5px !important;
+        width: 110px !important;
+        font-size: 11px !important;
+        padding: 6px !important;
+        z-index: 10006 !important;
+    }
+
+  
+    #exit-to-login-btn {
+        position: fixed !important;
+        bottom: 75px !important; 
+        left: 5px !important;
+        width: 110px !important;
+        font-size: 11px !important;
+        padding: 6px !important;
+        z-index: 10007 !important;
+    }
+
+    #master-add-btn {
+        bottom: 15px !important;
+        right: 10px !important; 
+        left: auto !important;
+        transform: none !important;
+        width: 120px !important;
+        font-size: 11px !important;
+        z-index: 10008 !important;
+    }
+
     .city-select-button {
         width: 100% !important;
-        margin: 10px 0 !important;
-    }
-
-    /* 5. Master Butonunu mobilde daha ulaşılabilir yapalım */
-    #master-add-btn {
-        width: 160px !important;
-        font-size: 0.9em !important;
-        bottom: 10px !important;
-        padding: 10px 20px !important;
-    }
-
-    /* 6. Admin Panelini (Soru Ekleme) mobilde tam ekran yapalım */
-    .admin-box {
-        width: 95% !important;
-        max-height: 90vh !important;
-    }
-
-    /* 7. Başlıkları biraz küçültelim ki sığsınlar */
-    h2 {
-        font-size: 1.5em !important;
+        font-size: 14px !important;
         padding: 10px !important;
+    }
+
+    #hint-box {
+        margin-bottom: 20px !important;
     }
 }
