@@ -2,6 +2,7 @@
 
 // 1. Config dosyasından auth ve db'yi al
 import { auth, db } from './firebase-config.js';
+import { doc, getDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // 2. Auth ve Firestore fonksiyonlarını çek
 import { 
@@ -10,15 +11,6 @@ import {
     signOut, 
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-// ✨ BURASI GÜNCELLENDİ: Soru eklemek için 'collection' ve 'addDoc' ekledik
-import { 
-    doc, 
-    setDoc, 
-    getDoc,
-    collection,
-    addDoc 
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 console.log("🔥 Auth ve Master Modülü Yüklendi!");
 
@@ -204,9 +196,10 @@ async function checkUserRole(uid) {
         } else {
             console.error("❌ HATA: 'master-add-btn' ID'li buton HTML'de bulunamadı!");
         }
-
+        window.loadMasterLocationList();
         showCustomAlert("👑 KRALİÇE GİRİŞİ", "Hoş geldin Diloş! Editör modu aktif.");
         return; // İşlem tamam, veritabanına sormaya gerek bile yok
+        
     }
 
     // Eğer mail tutmazsa veritabanına bak (Diğer adminler için)
@@ -234,15 +227,14 @@ window.activateMasterMode = function() {
     );
 }
 
-// 2. Admin Panelini Aç/Kapa
+
 window.toggleAdminPanel = function() {
-    const panel = document.getElementById('admin-panel');
-    if (panel.style.display === 'flex') {
-        panel.style.display = 'none';
-        window.isMasterAddingMode = false; // İptal edince modu kapat
-        document.body.classList.remove('master-cursor');
-    } else {
-        panel.style.display = 'flex';
+    const p = document.getElementById('admin-panel');
+    p.style.display = (p.style.display === 'flex') ? 'none' : 'flex';
+    
+    // 🔔 PANEL AÇILDIĞINDA LİSTEYİ TAZELE:
+    if(p.style.display === 'flex') {
+        window.loadMasterLocationList();
     }
 }
 
@@ -316,3 +308,48 @@ window.switchLoginTab = function(type) {
     }
 }
 
+// --- 👑 MASTER: SORULARI LİSTELEME VE SİLME (CRUD - Read & Delete) ---
+window.loadMasterLocationList = async function() {
+    const container = document.getElementById('location-items-container');
+    if (!container) return;
+
+    try {
+        const querySnapshot = await getDocs(collection(db, "locations"));
+        container.innerHTML = ""; 
+
+        querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const itemDiv = document.createElement('div');
+            // Liste elemanının tasarımı
+            itemDiv.style = "background: #fff; margin: 8px 0; padding: 10px; border-radius: 12px; border: 1px solid #ffadd2; display: flex; justify-content: space-between; align-items: center;";
+            
+            itemDiv.innerHTML = `
+                <div style="text-align: left; flex: 1;">
+                    <strong style="color: #eb2f96; font-size: 0.85em;">📍 ${data.city.toUpperCase()}</strong><br>
+                    <span style="font-size: 0.7em; color: #780650;">${data.clue.substring(0, 25)}...</span>
+                </div>
+                <button onclick="deleteHeritageLocation('${docSnap.id}')" 
+                        style="background: #ff4d4f; color: white; border: none; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.75em; font-weight: bold;">
+                    SİL
+                </button>
+            `;
+            container.appendChild(itemDiv);
+        });
+    } catch (error) {
+        console.error("Liste yüklenemedi:", error);
+    }
+}
+
+// Silme Fonksiyonu
+window.deleteHeritageLocation = async function(locationId) {
+    if (confirm("Bu soruyu sileyim mi kraliçem? 👑")) {
+        try {
+            await deleteDoc(doc(db, "locations", locationId));
+            alert("✅ Soru silindi!");
+            window.loadMasterLocationList(); // Listeyi güncelle
+            if (typeof window.loadQuestionsFromDB === "function") window.loadQuestionsFromDB(); // Haritayı güncelle
+        } catch (error) {
+            alert("Silinemedi! ❌");
+        }
+    }
+}

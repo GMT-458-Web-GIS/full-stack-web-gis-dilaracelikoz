@@ -591,7 +591,7 @@ body.guest-mode #side-panel {
     display: none; /* JS açana kadar gizli */
     position: fixed !important; /* Ekrana yapışık! */
     bottom: 30px !important;    /* Aşağıdan 30px yukarıda */
-    left: 50% !important;       /* Ortada */
+    left: 20% !important;       /* Ortada */
     transform: translateX(-50%) !important; /* Tam ortalamak için */
     z-index: 999999 !important; /* Her şeyin üstünde (Map'in bile) */
     
@@ -613,4 +613,98 @@ body.guest-mode #side-panel {
 /* Master Modunda İmleç Değişsin */
 body.master-cursor #map-area {
     cursor: crosshair; /* Nişangah işareti */
+}
+
+/* 💎 MASTER PANEL SIKIŞTIRMA VE SIĞDIRMA */
+
+/* 1. Ana Paneli (Admin Box) Boyutlandır */
+.admin-box {
+    max-height: 95vh !important; /* Panel ekranın %85'inden fazla uzamasın */
+    width: 380px !important;    /* Paneli biraz daraltalım */
+    overflow-y: auto !important; /* İçerik taşarsa panel kendi içinde kaysın */
+    padding: 15px !important;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. Soru Listesini (CRUD) Daha İnce Yap */
+#location-items-container {
+    max-height: 100px !important; /* Liste alanını küçültelim */
+    overflow-y: auto !important;
+    margin-bottom: 10px !important;
+    padding: 5px !important;
+}
+
+/* 3. Başlıkları ve Form Elemanlarını Küçült */
+.admin-box h2 { font-size: 2em !important; margin: 5px 0 !important; }
+.admin-box h3 { font-size: 1.5em !important; margin: 5px 0 !important; }
+.admin-box p { font-size: 1.5em !important; margin: 3px 0 !important; }
+
+/* 4. Form Kutularını (Input/Textarea) "Diyete" Sok */
+.input-group label { font-size: 0.8em !important; margin-bottom: 2px !important; }
+
+.admin-box input, 
+.admin-box select, 
+.admin-box textarea {
+    padding: 6px 12px !important; /* İç boşluğu azalttık */
+    font-size: 1em !important;  /* Yazıları küçülttük */
+    margin-bottom: 5px !important;
+}
+
+/* 5. "Veritabanına Kaydet" Butonunu Kibarlaştır */
+.glow-btn {
+    padding: 10px !important;
+    font-size: 0.9em !important;
+    margin-top: 10px !important;
+}
+
+/* --- 🎀 DİLOŞ'UN MOBİL MAKYAJI 🎀 --- */
+
+@media (max-width: 768px) {
+    /* 1. Sayfa düzenini yan yana olmaktan çıkar, alt alta diz */
+    body {
+        flex-direction: column !important;
+        overflow-y: auto !important; /* Telefon ekranında aşağı kaydırabilmek için */
+    }
+
+    /* 2. Harita ekranın üst yarısını kaplasın */
+    #map-area {
+        width: 100% !important;
+        height: 50vh !important; /* Ekran yüksekliğinin yarısı */
+    }
+
+    /* 3. Yan panel (skor, ipucu, butonlar) haritanın altına gelsin */
+    #side-panel {
+        width: 100% !important;
+        height: auto !important;
+        border-left: none !important;
+        border-top: 5px solid #EC7FA9 !important; /* Pembe çizgiyi üste alalım */
+        padding: 15px !important;
+    }
+
+    /* 4. Şehir seçme butonlarını tam genişlik yapalım ki parmakla basması kolay olsun */
+    .city-select-button {
+        width: 100% !important;
+        margin: 10px 0 !important;
+    }
+
+    /* 5. Master Butonunu mobilde daha ulaşılabilir yapalım */
+    #master-add-btn {
+        width: 160px !important;
+        font-size: 0.9em !important;
+        bottom: 10px !important;
+        padding: 10px 20px !important;
+    }
+
+    /* 6. Admin Panelini (Soru Ekleme) mobilde tam ekran yapalım */
+    .admin-box {
+        width: 95% !important;
+        max-height: 90vh !important;
+    }
+
+    /* 7. Başlıkları biraz küçültelim ki sığsınlar */
+    h2 {
+        font-size: 1.5em !important;
+        padding: 10px !important;
+    }
 }
